@@ -21,7 +21,7 @@ function App() {
   return (
     <div className="App">
       {
-        latitude ?
+        latitude && longitude?
           <Weather latitude={latitude} longitude={longitude} name="pratyay" /> :
           <p style={{ alignItems: "center" }}>Please Allow Location Access So I can Display Your city Weather</p>
       }
