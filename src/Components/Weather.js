@@ -1,6 +1,5 @@
 import { React, useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { FaSun } from 'react-icons/fa';
 import { BsWind, BsCalendarDay } from 'react-icons/bs';
 import { WiHumidity } from 'react-icons/wi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -9,29 +8,35 @@ import axios from 'axios';
 
 const Weather = ({latitude,longitude}) => {
 
-    // const [Weather,setWeather] = useState(["chakde"]);
     const [time, setTime] = useState(new Date());
     const Day = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const [mainData,setMainData] = useState(null);
-    const[weatherCode,setWeatherCode] = useState(null);
-    const[weatherName,setWeatherName] = useState(null);
-
+    const [mainData, setMainData] = useState(null);
+    const [weatherCode, setWeatherCode] = useState(null);
+    const [weatherName, setWeatherName] = useState(null);
+    const [cityName,setCityName] = useState(null);
+    
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('http://localhost:8000/');
-                
-                setMainData(response.data);
+        if (latitude!=null && longitude != null) {
+            const fetchData = async () => {
+                try {
+                    const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=724289f14343ce1e188e979a5ec3d139`);
+                    if(!response){
 
-                const data = response.data;
-                setWeatherCode(data.weather[0].icon);
-                setWeatherName(data.weather[0].description)
-            
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        fetchData();
+                    }
+                    else{
+                        setMainData(response.data);
+                        const data = response.data;
+                        setCityName(data.name);
+                        setWeatherCode(data.weather[0].icon);
+                        setWeatherName(data.weather[0].description)
+                    }
+
+                } catch (error) {
+                    console.log(error);
+                }
+            };
+            fetchData();
+        }
     }, []);
 
     useEffect(() => {
@@ -44,49 +49,50 @@ const Weather = ({latitude,longitude}) => {
 
     function getWeatherIcon(code) {
         switch (code) {
-          case "01d":
-          case "01n":
-            return faSun;
-          case "02d":
-          case "02n":
-          case "03d":
-          case "03n":
-          case "04d":
-          case "04n":
-            return faCloud;
-          case "09d":
-          case "09n":
-          case "10d":
-          case "10n":
-            return faCloudShowersHeavy;
-          case "11d":
-          case "11n":
-            return faBolt;
-          case "13d":
-          case "13n":
-            return faSnowflake;
-          case "50d":
-          case "50n":
-            return faSmog;
-          case "50d":
-          case "50n":
-            return faWind;
-          default:
-            return faSun;
+            case "01d":
+            case "01n":
+                return faSun;
+            case "02d":
+            case "02n":
+            case "03d":
+            case "03n":
+            case "04d":
+            case "04n":
+                return faCloud;
+            case "09d":
+            case "09n":
+            case "10d":
+            case "10n":
+                return faCloudShowersHeavy;
+            case "11d":
+            case "11n":
+                return faBolt;
+            case "13d":
+            case "13n":
+                return faSnowflake;
+            case "50d":
+            case "50n":
+                return faSmog;
+            case "50n":
+                return faWind;
+            default:
+                return faSun;
         }
-      }
+    }
 
     const currentHour = time.getHours();
     const currentMinute = time.getMinutes();
     const Today = Day[time.getDay()];
     const weatherIcon = getWeatherIcon(weatherCode);
-    
-    
+
+
     return (
         <Wrapper>
             <CityTime className='city-time'>
                 <div className='city'>
-                    Adalaj
+                    {
+                        cityName?`${cityName}`:"City"
+                    }
                 </div>
                 <div className='time'>
                     {currentHour > 12 ? currentHour - 12 : currentHour} : {currentMinute < 10 ? '0' + currentMinute : currentMinute} : {currentHour > 12 ? 'PM' : 'AM'}

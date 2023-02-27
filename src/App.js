@@ -1,7 +1,6 @@
-import {React,useEffect,useState} from 'react';
+import { React, useEffect, useState } from 'react';
 import './App.css';
 import Weather from './Components/Weather';
-import Clock from './Components/Clock';
 
 function App() {
   const [latitude, setLatitude] = useState(null);
@@ -18,9 +17,14 @@ function App() {
       }
     );
   }, []);
+
   return (
     <div className="App">
-      <Weather latitude={latitude} longitude={longitude}/>
+      {
+        latitude ?
+          <Weather latitude={latitude} longitude={longitude} name="pratyay" /> :
+          <p style={{ alignItems: "center" }}>Please Allow Location Access So I can Display Your city Weather</p>
+      }
     </div>
   );
 }
